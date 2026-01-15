@@ -1,0 +1,66 @@
+$C = "../Common.ui";
+
+Group {
+  Anchor: (Left: 10, Top: 10, Right: 10, Height: 600);
+  Background: (Color: #0a0f17);
+  Padding: (Left: 4, Right: 4, Top: 4, Bottom: 4);
+  LayoutMode: Top;
+
+  Label {
+    Text: "Server Logs";
+    Style: (TextColor: #96a9be, FontSize: 14, RenderBold: true, RenderUppercase: true);
+    Anchor: (Bottom: 8);
+  }
+
+  Group {
+    LayoutMode: Left;
+    Anchor: (Bottom: 8);
+    Padding: (Left: 2);
+    Label {
+      Text: "Min Level";
+      Style: (TextColor: #96a9be, FontSize: 12, RenderBold: true, RenderUppercase: true, VerticalAlignment: Center);
+      Anchor: (Right: 8, Height: 22);
+    }
+
+    $C.@DropdownBox #MinLevelFilter {
+      Anchor: (Width: 160, Height: $C.@DropdownBoxHeight);
+    }
+
+    Group {
+      Anchor: (Width: 10);
+    }
+
+    Label {
+      Text: "Logger";
+      Style: (TextColor: #96a9be, FontSize: 12, RenderBold: true, RenderUppercase: true, VerticalAlignment: Center);
+      Anchor: (Right: 8, Height: 22);
+    }
+
+    $C.@DropdownBox #LoggerFilter {
+      Anchor: (Width: 220, Height: $C.@DropdownBoxHeight);
+    }
+
+    Group {
+      Anchor: (Width: 10);
+    }
+
+    Label {
+      Text: "Text";
+      Style: (TextColor: #96a9be, FontSize: 12, RenderBold: true, RenderUppercase: true, VerticalAlignment: Center);
+      Anchor: (Right: 8, Height: 22);
+    }
+
+    $C.@TextField #LogTextFilter {
+      @Anchor = (Width: 240, Height: 26);
+      PlaceholderText: "filter...";
+    }
+  }
+
+  Group #LogBox {
+    Anchor: (Height: 520, Left: 0, Right: 0);
+    Background: (Color: #0f1624);
+    FlexWeight: 1;
+    LayoutMode: TopScrolling;
+    Padding: (Left: 4);
+  }
+}

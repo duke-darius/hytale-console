@@ -1,0 +1,24 @@
+Group #Row {
+  Anchor: (Top: 0, Left: 0, Right: 0);
+  Padding: (Left: 4, Right: 4, Top: 2, Bottom: 2);
+  LayoutMode: Left;
+
+  Label #RowPrefix {
+    Text: "";
+    Anchor: (Width: 150);
+    Style: (TextColor: #e6e6e6, FontSize: 12, FontName: "Secondary");
+  }
+
+  Label #RowLogger {
+    Text: "";
+    Anchor: (Width: 160);
+    Style: (TextColor: #b794f4, FontSize: 12, FontName: "Secondary");
+  }
+
+  Label #RowSuffix {
+    Text: "";
+    Anchor: (Left: 0, Right: 0);
+    FlexWeight: 1;
+    Style: (TextColor: #e6e6e6, FontSize: 12, Wrap: false);
+  }
+}
