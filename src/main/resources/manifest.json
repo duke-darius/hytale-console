@@ -1,7 +1,7 @@
 {
     "Group": "DukeDarius",
     "Name": "HytaleConsole",
-    "Version": "0.0.2",
+    "Version": "0.0.3",
     "Description": "An ingame console for viewing logs",
     "Authors": [
         {
