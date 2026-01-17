@@ -20,12 +20,14 @@ import java.util.List;
 
 public class LogUIPage extends InteractiveCustomUIPage<LogUIPage.LogUIEventData> {
     private static final String LAYOUT = "Pages/HytaleConsole_Logs.ui";
+    private static final long INITIAL_UPDATE_GRACE_MS = 750L;
     private static final String SEL_LOG_BOX = "#LogBox";
     private static final String ROW_UI = "Pages/HytaleConsole_LogRow.ui";
     private static final String SEL_MIN_LEVEL_FILTER_INPUT = "#MinLevelFilter";
     private static final String SEL_LOGGER_FILTER_INPUT = "#LoggerFilter";
     private static final String SEL_TEXT_FILTER_INPUT = "#LogTextFilter";
     private final LogUIManager manager;
+    private final long createdAtMs = System.currentTimeMillis();
     @Nonnull
     private String loggerFilter = LogUIManager.FILTER_ALL;
     @Nonnull
@@ -45,8 +47,32 @@ public class LogUIPage extends InteractiveCustomUIPage<LogUIPage.LogUIEventData>
             @Nonnull UIEventBuilder eventBuilder,
             @Nonnull Store<EntityStore> store
     ) {
+        // Build the initial UI in a single command sequence so we don't send updates
+        // that reference elements before the layout has been appended on the client.
         commandBuilder.append(LAYOUT);
+
+        // Initialize dropdown options/values.
+        commandBuilder.set(SEL_LOGGER_FILTER_INPUT + ".Entries", manager.getLoggerFilterEntriesSnapshot());
+        commandBuilder.set(SEL_MIN_LEVEL_FILTER_INPUT + ".Entries", manager.getMinLevelEntriesSnapshot());
+        commandBuilder.set(SEL_LOGGER_FILTER_INPUT + ".Value", loggerFilter);
+        commandBuilder.set(SEL_MIN_LEVEL_FILTER_INPUT + ".Value", minLevelFilter);
+        commandBuilder.set(SEL_TEXT_FILTER_INPUT + ".Value", textFilter);
+
+        // Initialize the log rows.
         commandBuilder.clear(SEL_LOG_BOX);
+        java.util.List<LogRow> rows = manager.getRowSnapshot(loggerFilter, minLevelFilter, textFilter);
+        for (int i = 0; i < rows.size(); i++) {
+            LogRow row = rows.get(i);
+            commandBuilder.append(SEL_LOG_BOX, ROW_UI);
+            String selector = SEL_LOG_BOX + "[" + i + "] ";
+            commandBuilder.set(selector + "#RowPrefix.Text", row.prefix);
+            commandBuilder.set(selector + "#RowLogger.Text", row.logger);
+            commandBuilder.set(selector + "#RowSuffix.Text", row.suffix);
+            commandBuilder.set(selector + "#RowPrefix.Style.TextColor", row.colorHex);
+            commandBuilder.set(selector + "#RowSuffix.Style.TextColor", row.colorHex);
+        }
+
+        // Event bindings.
         eventBuilder.addEventBinding(
                 CustomUIEventBindingType.ValueChanged,
                 SEL_MIN_LEVEL_FILTER_INPUT,
@@ -68,6 +94,9 @@ public class LogUIPage extends InteractiveCustomUIPage<LogUIPage.LogUIEventData>
     }
 
     public void updateRows(@Nonnull java.util.List<LogRow> rows) {
+        if (!readyForUpdates()) {
+            return;
+        }
         UICommandBuilder b = new UICommandBuilder();
         b.clear(SEL_LOG_BOX);
         for (int i = 0; i < rows.size(); i++) {
@@ -89,6 +118,9 @@ public class LogUIPage extends InteractiveCustomUIPage<LogUIPage.LogUIEventData>
             @Nullable String selectedMinLevel,
             @Nullable String textFilter
     ) {
+        if (!readyForUpdates()) {
+            return;
+        }
         UICommandBuilder b = new UICommandBuilder();
         b.set(SEL_LOGGER_FILTER_INPUT + ".Entries", loggerEntries);
         b.set(SEL_MIN_LEVEL_FILTER_INPUT + ".Entries", minLevelEntries);
@@ -126,6 +158,10 @@ public class LogUIPage extends InteractiveCustomUIPage<LogUIPage.LogUIEventData>
 
     public void setTextFilter(@Nonnull String textFilter) {
         this.textFilter = textFilter;
+    }
+
+    private boolean readyForUpdates() {
+        return (System.currentTimeMillis() - createdAtMs) >= INITIAL_UPDATE_GRACE_MS;
     }
 
     @Override

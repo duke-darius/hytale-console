@@ -149,8 +149,6 @@ public class LogUIManager {
             PageManager pageManager = playerComponent.getPageManager();
             pageManager.openCustomPage(ref, store, page);
             pages.addIfAbsent(page);
-            page.updateFilterOptions(getLoggerFilterEntries(), getMinLevelEntries(), page.getLoggerFilter(), page.getMinLevelFilter(), page.getTextFilter());
-            page.updateRows(getRowSnapshot(page.getLoggerFilter(), page.getMinLevelFilter(), page.getTextFilter()));
         });
     }
 
@@ -187,7 +185,7 @@ public class LogUIManager {
             rows.removeFirst();
         }
     }
-    private List<LogRow> getRowSnapshot(@Nonnull String loggerFilter, @Nonnull String minLevelFilter, @Nonnull String textFilter) {
+    List<LogRow> getRowSnapshot(@Nonnull String loggerFilter, @Nonnull String minLevelFilter, @Nonnull String textFilter) {
         Object[] arr = rows.toArray();
         List<LogRow> list = new ArrayList<>(arr.length);
         String text = textFilter.trim().toLowerCase();
@@ -218,6 +216,11 @@ public class LogUIManager {
         }
         return entries;
     }
+
+    List<DropdownEntryInfo> getLoggerFilterEntriesSnapshot() {
+        return getLoggerFilterEntries();
+    }
+
     private List<DropdownEntryInfo> getMinLevelEntries() {
         List<DropdownEntryInfo> entries = new ArrayList<>(5);
 
@@ -231,6 +234,10 @@ public class LogUIManager {
         entries.add(new DropdownEntryInfo(LocalizableString.fromString(LEVEL_FINEST), LEVEL_FINEST));
         entries.add(new DropdownEntryInfo(LocalizableString.fromString(LEVEL_OFF), LEVEL_OFF));
         return entries;
+    }
+
+    List<DropdownEntryInfo> getMinLevelEntriesSnapshot() {
+        return getMinLevelEntries();
     }
 
     public void onFilterChanged(@Nonnull LogUIPage page, @Nonnull String filter) {
