@@ -2,6 +2,7 @@ package dev.dukedarius.HytaleConsole;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.logger.backend.HytaleConsole;
 import com.hypixel.hytale.server.core.HytaleServer;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.entity.entities.player.pages.PageManager;
@@ -257,5 +258,9 @@ public class LogUIManager {
         String loggerPart = "[" + logger + "]";
         String suffix = " " + msg;
         return new LogRow(prefix, loggerPart, logger, levelValue, suffix, levelColor(r));
+    }
+
+    public void pageDismissed(LogUIPage logUIPage) {
+        pages.remove(logUIPage);
     }
 }

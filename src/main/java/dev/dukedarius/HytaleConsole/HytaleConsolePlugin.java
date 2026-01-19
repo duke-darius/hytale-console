@@ -13,7 +13,7 @@ public class HytaleConsolePlugin extends JavaPlugin {
 
     private CopyOnWriteArrayList<LogRecord> logs = new CopyOnWriteArrayList<>();
     private LogUIManager logUIManager;
-    private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+    public static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
     public HytaleConsolePlugin(@Nonnull JavaPluginInit init) {
         super(init);

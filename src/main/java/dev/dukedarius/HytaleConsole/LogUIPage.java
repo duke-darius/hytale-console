@@ -20,7 +20,6 @@ import java.util.List;
 
 public class LogUIPage extends InteractiveCustomUIPage<LogUIPage.LogUIEventData> {
     private static final String LAYOUT = "Pages/HytaleConsole_Logs.ui";
-    private static final long INITIAL_UPDATE_GRACE_MS = 750L;
     private static final String SEL_LOG_BOX = "#LogBox";
     private static final String ROW_UI = "Pages/HytaleConsole_LogRow.ui";
     private static final String SEL_MIN_LEVEL_FILTER_INPUT = "#MinLevelFilter";
@@ -38,6 +37,11 @@ public class LogUIPage extends InteractiveCustomUIPage<LogUIPage.LogUIEventData>
     public LogUIPage(@Nonnull PlayerRef playerRef, @Nonnull LogUIManager manager) {
         super(playerRef, CustomPageLifetime.CanDismissOrCloseThroughInteraction, LogUIEventData.CODEC);
         this.manager = manager;
+    }
+
+    @Override
+    public void onDismiss(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store) {
+        manager.pageDismissed(this);
     }
 
     @Override
@@ -94,9 +98,6 @@ public class LogUIPage extends InteractiveCustomUIPage<LogUIPage.LogUIEventData>
     }
 
     public void updateRows(@Nonnull java.util.List<LogRow> rows) {
-        if (!readyForUpdates()) {
-            return;
-        }
         UICommandBuilder b = new UICommandBuilder();
         b.clear(SEL_LOG_BOX);
         for (int i = 0; i < rows.size(); i++) {
@@ -118,9 +119,6 @@ public class LogUIPage extends InteractiveCustomUIPage<LogUIPage.LogUIEventData>
             @Nullable String selectedMinLevel,
             @Nullable String textFilter
     ) {
-        if (!readyForUpdates()) {
-            return;
-        }
         UICommandBuilder b = new UICommandBuilder();
         b.set(SEL_LOGGER_FILTER_INPUT + ".Entries", loggerEntries);
         b.set(SEL_MIN_LEVEL_FILTER_INPUT + ".Entries", minLevelEntries);
@@ -158,10 +156,6 @@ public class LogUIPage extends InteractiveCustomUIPage<LogUIPage.LogUIEventData>
 
     public void setTextFilter(@Nonnull String textFilter) {
         this.textFilter = textFilter;
-    }
-
-    private boolean readyForUpdates() {
-        return (System.currentTimeMillis() - createdAtMs) >= INITIAL_UPDATE_GRACE_MS;
     }
 
     @Override
